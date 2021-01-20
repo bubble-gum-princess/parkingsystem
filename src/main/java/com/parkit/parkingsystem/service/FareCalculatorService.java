@@ -1,32 +1,43 @@
 package com.parkit.parkingsystem.service;
 
 import com.parkit.parkingsystem.constants.Fare;
+import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.model.Ticket;
 
 public class FareCalculatorService {
 
-    public void calculateFare(Ticket ticket){
-        if( (ticket.getOutTime() == null) || (ticket.getOutTime().before(ticket.getInTime())) ){
-            throw new IllegalArgumentException("Out time provided is incorrect:"+ticket.getOutTime().toString());
-        }
+	public void calculateFare(Ticket ticket) {
+		if ((ticket.getOutTime() == null) || (ticket.getOutTime().before(ticket.getInTime()))) {
+			throw new IllegalArgumentException("Out time provided is incorrect:" + ticket.getOutTime().toString());
+		}
+		double duration = duration(ticket);
+		double price = price(duration, ticket.getParkingSpot().getParkingType());
+		ticket.setPrice(price);
 
-        //TODO: Some tests are failing here. Need to check if this logic is correct
-        long Diff = ticket.getOutTime().getTime() - ticket.getInTime().getTime();
-        double durationinminutes = Diff/1000/60;
-        double duration = durationinminutes/60;
-        // converts minutes to hours.
-        
+	}
 
-        switch (ticket.getParkingSpot().getParkingType()){
-            case CAR: {
-                ticket.setPrice(duration * Fare.CAR_RATE_PER_HOUR);
-                break;
-            }
-            case BIKE: {
-                ticket.setPrice(duration * Fare.BIKE_RATE_PER_HOUR);
-                break;
-            }
-            default: throw new IllegalArgumentException("Unkown Parking Type");
-        }
-    }
+	private double duration(Ticket ticket) {
+		long Diff = ticket.getOutTime().getTime() - ticket.getInTime().getTime();
+		double durationinminutes = Diff / 1000 / 60;
+		double duration = durationinminutes / 60;
+		return duration;
+		// converts minutes to hours.
+	}
+
+	private double price(double duration, ParkingType parkingType) {
+		if (duration <= 0.5) {
+			return 0;
+		}
+		switch (parkingType) {
+		case CAR: {
+			return duration * Fare.CAR_RATE_PER_HOUR;
+		}
+		case BIKE: {
+			return duration * Fare.BIKE_RATE_PER_HOUR;
+		}
+		default: {
+			throw new IllegalArgumentException("Unkown Parking Type");
+		}
+		}
+	}
 }
