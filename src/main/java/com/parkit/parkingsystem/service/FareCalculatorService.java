@@ -6,14 +6,24 @@ import com.parkit.parkingsystem.model.Ticket;
 
 public class FareCalculatorService {
 
-	public void calculateFare(Ticket ticket) {
+	public void calculateFare(Ticket ticket, boolean oldClient) {
 		if ((ticket.getOutTime() == null) || (ticket.getOutTime().before(ticket.getInTime()))) {
 			throw new IllegalArgumentException("Out time provided is incorrect:" + ticket.getOutTime().toString());
 		}
 		double duration = duration(ticket);
 		double price = price(duration, ticket.getParkingSpot().getParkingType());
-		ticket.setPrice(price);
+		if (oldClient) {
+			double priceWithDiscount = reduction(price);
+			ticket.setPrice(priceWithDiscount);
+		} else {
+			ticket.setPrice(price);
+		}
 
+	}
+
+	private double reduction(double price) {
+		double priceWithDiscount = price * 0.95;
+		return priceWithDiscount;
 	}
 
 	private double duration(Ticket ticket) {
@@ -40,4 +50,5 @@ public class FareCalculatorService {
 		}
 		}
 	}
+
 }
