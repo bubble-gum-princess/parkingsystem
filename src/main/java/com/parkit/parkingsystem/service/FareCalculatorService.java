@@ -6,6 +6,8 @@ import com.parkit.parkingsystem.model.Ticket;
 
 public class FareCalculatorService {
 
+	final static double HALF_HOUR = 0.5;
+
 	public void calculateFare(Ticket ticket, boolean oldClient) {
 		if ((ticket.getOutTime() == null) || (ticket.getOutTime().before(ticket.getInTime()))) {
 			throw new IllegalArgumentException("Out time provided is incorrect:" + ticket.getOutTime().toString());
@@ -35,7 +37,7 @@ public class FareCalculatorService {
 	}
 
 	private double price(double duration, ParkingType parkingType) {
-		if (duration <= 0.5) {
+		if (duration <= HALF_HOUR) {
 			return 0;
 		}
 		switch (parkingType) {
