@@ -1,5 +1,8 @@
 package com.parkit.parkingsystem.service;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import com.parkit.parkingsystem.constants.Fare;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.model.Ticket;
@@ -29,11 +32,22 @@ public class FareCalculatorService {
 	}
 
 	private double duration(Ticket ticket) {
-		long Diff = ticket.getOutTime().getTime() - ticket.getInTime().getTime();
-		double durationinminutes = Diff / 1000 / 60;
+		Date inTime = clearSeconds(ticket.getInTime());
+		Date outTime = clearSeconds(ticket.getOutTime());
+		
+		long Diff = outTime.getTime() - inTime.getTime();
+		
+		double durationinminutes = Diff / 1000 / 60d;
 		double duration = durationinminutes / 60;
 		return duration;
-		// converts minutes to hours.
+	}
+	
+	private static Date clearSeconds(Date d) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(d);
+		c.set(Calendar.MILLISECOND, 0);
+		c.set(Calendar.SECOND, 0);
+		return c.getTime();
 	}
 
 	private double price(double duration, ParkingType parkingType) {
