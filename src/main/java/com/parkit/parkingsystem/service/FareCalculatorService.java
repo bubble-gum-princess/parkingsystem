@@ -37,7 +37,7 @@ public class FareCalculatorService {
 		
 		long Diff = outTime.getTime() - inTime.getTime();
 		
-		double durationinminutes = Diff / 1000 / 60d;
+		double durationinminutes = Diff / 1000d / 60d;
 		double duration = durationinminutes / 60;
 		return duration;
 	}
