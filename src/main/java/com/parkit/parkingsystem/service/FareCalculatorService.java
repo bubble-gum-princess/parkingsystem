@@ -1,7 +1,7 @@
 package com.parkit.parkingsystem.service;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 import com.parkit.parkingsystem.constants.Fare;
 import com.parkit.parkingsystem.constants.ParkingType;
@@ -12,7 +12,7 @@ public class FareCalculatorService {
 	final static double HALF_HOUR = 0.5;
 
 	public void calculateFare(Ticket ticket, boolean oldClient) {
-		if ((ticket.getOutTime() == null) || (ticket.getOutTime().before(ticket.getInTime()))) {
+		if ((ticket.getOutTime() == null) || (ticket.getOutTime().isBefore(ticket.getInTime()))) {
 			throw new IllegalArgumentException("Out time provided is incorrect:" + ticket.getOutTime().toString());
 		}
 		double duration = duration(ticket);
@@ -32,22 +32,15 @@ public class FareCalculatorService {
 	}
 
 	private double duration(Ticket ticket) {
-		Date inTime = clearSeconds(ticket.getInTime());
-		Date outTime = clearSeconds(ticket.getOutTime());
+		LocalDateTime inTime = clearSeconds(ticket.getInTime());
+		LocalDateTime outTime = clearSeconds(ticket.getOutTime());
 		
-		long Diff = outTime.getTime() - inTime.getTime();
-		
-		double durationinminutes = Diff / 1000d / 60d;
-		double duration = durationinminutes / 60;
+		double duration = Duration.between(inTime, outTime).toMinutes() / 60d;
 		return duration;
 	}
 	
-	private static Date clearSeconds(Date d) {
-		Calendar c = Calendar.getInstance();
-		c.setTime(d);
-		c.set(Calendar.MILLISECOND, 0);
-		c.set(Calendar.SECOND, 0);
-		return c.getTime();
+	private static LocalDateTime clearSeconds(LocalDateTime d) {
+		return d.withSecond(0).withNano(0);
 	}
 
 	private double price(double duration, ParkingType parkingType) {

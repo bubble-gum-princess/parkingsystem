@@ -1,15 +1,16 @@
 package com.parkit.parkingsystem.service;
 
+import java.time.LocalDateTime;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.util.InputReaderUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.Date;
 
 public class ParkingService {
 
@@ -41,7 +42,7 @@ public class ParkingService {
 							"Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.");
 				}
 
-				Date inTime = new Date();
+				LocalDateTime inTime = LocalDateTime.now();
 				Ticket ticket = new Ticket();
 				// ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
 				// ticket.setId(ticketID);
@@ -107,7 +108,7 @@ public class ParkingService {
 		try {
 			String vehicleRegNumber = getVehichleRegNumber();
 			Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
-			Date outTime = new Date();
+			LocalDateTime outTime = LocalDateTime.now();
 			ticket.setOutTime(outTime);
 			boolean oldClient = ticketDAO.existOldTicket(vehicleRegNumber);
 			fareCalculatorService.calculateFare(ticket, oldClient);

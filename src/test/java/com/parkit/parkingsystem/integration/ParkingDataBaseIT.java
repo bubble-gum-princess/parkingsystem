@@ -2,7 +2,7 @@ package com.parkit.parkingsystem.integration;
 
 import static org.mockito.Mockito.when;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -75,8 +75,7 @@ public class ParkingDataBaseIT {
 		ParkingSpot parkingSpot = parkingService.getNextParkingNumberIfAvailable();
 		parkingSpot.setAvailable(false);
 		parkingSpotDAO.updateParking(parkingSpot);
-		Date inTime = new Date();
-		inTime.setTime(inTime.getTime() - 2 * 60 * 60 * 1000);
+		LocalDateTime inTime = LocalDateTime.now().minusHours(2);
 		Ticket ticketIn = new Ticket(parkingSpot, "ABCDEF", 0, inTime, null);
 		ticketDAO.saveTicket(ticketIn);
 
