@@ -34,7 +34,7 @@ public class FareCalculatorService {
 	private double duration(Ticket ticket) {
 		LocalDateTime inTime = clearSeconds(ticket.getInTime());
 		LocalDateTime outTime = clearSeconds(ticket.getOutTime());
-		
+		// 0.5 => 30 minutes ;
 		double duration = Duration.between(inTime, outTime).toMinutes() / 60d;
 		return duration;
 	}
